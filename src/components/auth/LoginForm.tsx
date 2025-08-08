@@ -14,10 +14,10 @@ export function LoginForm() {
 
   const handleGoogleSignIn = async () => {
     // 개발환경에서는 바로 대시보드로 이동
-    if (process.env.NODE_ENV === 'development') {
-      router.push('/');
-      return;
-    }
+    // if (process.env.NODE_ENV === 'development') {
+    //   router.push('/');
+    //   return;
+    // }
 
     try {
       const jwt = await signInWithGoogle();
