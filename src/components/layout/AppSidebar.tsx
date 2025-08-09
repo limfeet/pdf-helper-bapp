@@ -1,5 +1,5 @@
-import { FileText } from 'lucide-react';
-import { Badge } from "@/components/ui/badge";
+import { FileText } from 'lucide-react'
+import { Badge } from '@/components/ui/badge'
 import {
   Sidebar,
   SidebarContent,
@@ -11,17 +11,19 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from "@/components/ui/sidebar";
-import { NavigationItem } from "@/types";
+} from '@/components/ui/sidebar'
+import { NavigationItem } from '@/types'
 
 interface AppSidebarProps {
-  navigationItems: NavigationItem[];
-  className?: string;
+  navigationItems: NavigationItem[]
+  className?: string
 }
 
 export function AppSidebar({ navigationItems, className }: AppSidebarProps) {
   return (
-    <Sidebar className={`backdrop-blur-xl bg-background/95 border-r border-border/50 ${className || ''}`}>
+    <Sidebar
+      className={`backdrop-blur-xl bg-background/95 border-r border-border/50 ${className || ''}`}
+    >
       <SidebarHeader className="border-b border-border/50 p-4">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
@@ -59,5 +61,5 @@ export function AppSidebar({ navigationItems, className }: AppSidebarProps) {
       </SidebarContent>
       <SidebarRail />
     </Sidebar>
-  );
+  )
 }

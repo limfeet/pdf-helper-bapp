@@ -1,15 +1,15 @@
-"use client"
+'use client'
 
-import * as React from "react";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import { AppSidebar } from "./AppSidebar";
-import { Header } from "./Header";
-import { NavigationItem } from "@/types";
+import * as React from 'react'
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
+import { AppSidebar } from './AppSidebar'
+import { Header } from './Header'
+import { NavigationItem } from '@/types'
 
 interface DashboardLayoutProps {
-  children: React.ReactNode;
-  navigationItems: NavigationItem[];
-  onSearch?: (query: string) => void;
+  children: React.ReactNode
+  navigationItems: NavigationItem[]
+  onSearch?: (query: string) => void
 }
 
 export function DashboardLayout({ children, navigationItems, onSearch }: DashboardLayoutProps) {
@@ -19,11 +19,9 @@ export function DashboardLayout({ children, navigationItems, onSearch }: Dashboa
         <AppSidebar navigationItems={navigationItems} />
         <SidebarInset>
           <Header onSearch={onSearch} />
-          <main className="flex flex-1 flex-col gap-4 p-4 md:gap-6 md:p-6">
-            {children}
-          </main>
+          <main className="flex flex-1 flex-col gap-4 p-4 md:gap-6 md:p-6">{children}</main>
         </SidebarInset>
       </div>
     </SidebarProvider>
-  );
+  )
 }

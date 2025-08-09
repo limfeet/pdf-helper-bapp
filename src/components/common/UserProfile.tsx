@@ -1,8 +1,8 @@
-'use client';
+'use client'
 
-import { User, ChevronDown } from 'lucide-react';
-import Image from 'next/image';
-import { Button } from "@/components/ui/button";
+import { User, ChevronDown } from 'lucide-react'
+import Image from 'next/image'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,16 +10,16 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useAuth } from '@/contexts/AuthContext';
-import { useRouter } from 'next/navigation';
+} from '@/components/ui/dropdown-menu'
+import { useAuth } from '@/contexts/AuthContext'
+import { useRouter } from 'next/navigation'
 
 interface UserProfileProps {
-  userName?: string;
-  userRole?: string;
-  onProfileClick?: () => void;
-  onSettingsClick?: () => void;
-  onLogoutClick?: () => void;
+  userName?: string
+  userRole?: string
+  onProfileClick?: () => void
+  onSettingsClick?: () => void
+  onLogoutClick?: () => void
 }
 
 export function UserProfile({
@@ -27,59 +27,59 @@ export function UserProfile({
   userRole,
   onProfileClick,
   onSettingsClick,
-  onLogoutClick
+  onLogoutClick,
 }: UserProfileProps) {
-  const { user, signOut } = useAuth();
-  const router = useRouter();
+  const { user, signOut } = useAuth()
+  const router = useRouter()
 
-  console.log('🔍 UserProfile 렌더링됨');
-  console.log('👤 user:', user);
-  console.log('🔧 signOut 함수:', typeof signOut);
+  console.log('🔍 UserProfile 렌더링됨')
+  console.log('👤 user:', user)
+  console.log('🔧 signOut 함수:', typeof signOut)
 
   // Firebase 사용자 정보 우선 사용
-  const displayName = userName || user?.displayName || user?.email || "Guest";
-  const displayRole = userRole || "User";
+  const displayName = userName || user?.displayName || user?.email || 'Guest'
+  const displayRole = userRole || 'User'
 
   const handleLogout = async () => {
-    console.log('🔥 로그아웃 시작');
-    
+    console.log('🔥 로그아웃 시작')
+
     try {
       // 사용자 정의 로그아웃 함수가 있으면 실행
       if (onLogoutClick) {
-        console.log('📞 사용자 정의 로그아웃 함수 실행');
-        onLogoutClick();
+        console.log('📞 사용자 정의 로그아웃 함수 실행')
+        onLogoutClick()
       }
-      
-      console.log('🚪 Firebase signOut 시작');
+
+      console.log('🚪 Firebase signOut 시작')
       // Firebase 로그아웃
-      await signOut();
-      console.log('✅ Firebase signOut 완료');
-      
-      console.log('🔄 로그인 페이지로 리다이렉트');
+      await signOut()
+      console.log('✅ Firebase signOut 완료')
+
+      console.log('🔄 로그인 페이지로 리다이렉트')
       // 로그인 페이지로 리다이렉트
-      router.push('/login');
+      router.push('/login')
     } catch (error) {
-      console.error('❌ 로그아웃 중 오류:', error);
+      console.error('❌ 로그아웃 중 오류:', error)
     }
-  };
+  }
 
   const handleProfileClick = () => {
     if (onProfileClick) {
-      onProfileClick();
+      onProfileClick()
     } else {
       // 기본 동작: 프로필 페이지로 이동
-      router.push('/profile');
+      router.push('/profile')
     }
-  };
+  }
 
   const handleSettingsClick = () => {
     if (onSettingsClick) {
-      onSettingsClick();
+      onSettingsClick()
     } else {
       // 기본 동작: 설정 페이지로 이동
-      router.push('/settings');
+      router.push('/settings')
     }
-  };
+  }
 
   return (
     <DropdownMenu>
@@ -87,9 +87,9 @@ export function UserProfile({
         <Button variant="ghost" className="flex items-center gap-2 px-3">
           <div className="h-8 w-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center overflow-hidden">
             {user?.photoURL ? (
-              <Image 
-                src={user.photoURL} 
-                alt="Profile" 
+              <Image
+                src={user.photoURL}
+                alt="Profile"
                 width={32}
                 height={32}
                 className="rounded-full object-cover"
@@ -109,20 +109,18 @@ export function UserProfile({
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleProfileClick}>
-          Profile
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleSettingsClick}>
-          Settings
-        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleProfileClick}>Profile</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleSettingsClick}>Settings</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => {
-          console.log('🎯 Log out 버튼 클릭됨!');
-          handleLogout();
-        }}>
+        <DropdownMenuItem
+          onClick={() => {
+            console.log('🎯 Log out 버튼 클릭됨!')
+            handleLogout()
+          }}
+        >
           Log out
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
-  );
+  )
 }

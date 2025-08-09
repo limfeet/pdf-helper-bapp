@@ -1,6 +1,6 @@
-import { Bell } from 'lucide-react';
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Bell } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,36 +8,36 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu'
 
 interface Notification {
-  id: number;
-  title: string;
-  description: string;
-  timestamp?: string;
+  id: number
+  title: string
+  description: string
+  timestamp?: string
 }
 
 interface NotificationDropdownProps {
-  notifications?: Notification[];
-  unreadCount?: number;
+  notifications?: Notification[]
+  unreadCount?: number
 }
 
 const defaultNotifications: Notification[] = [
   {
     id: 1,
-    title: "Document processed",
-    description: "Annual Report 2024.pdf is ready"
+    title: 'Document processed',
+    description: 'Annual Report 2024.pdf is ready',
   },
   {
     id: 2,
-    title: "Processing failed",
-    description: "Financial Analysis.pdf encountered an error"
-  }
-];
+    title: 'Processing failed',
+    description: 'Financial Analysis.pdf encountered an error',
+  },
+]
 
-export function NotificationDropdown({ 
-  notifications = defaultNotifications, 
-  unreadCount = 3 
+export function NotificationDropdown({
+  notifications = defaultNotifications,
+  unreadCount = 3,
 }: NotificationDropdownProps) {
   return (
     <DropdownMenu>
@@ -64,5 +64,5 @@ export function NotificationDropdown({
         ))}
       </DropdownMenuContent>
     </DropdownMenu>
-  );
+  )
 }

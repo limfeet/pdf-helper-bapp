@@ -1,6 +1,6 @@
-import { FileText, Eye, Download, Trash2 } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { FileText, Eye, Download, Trash2 } from 'lucide-react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import {
   Table,
   TableBody,
@@ -8,25 +8,19 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { FileItem } from "@/types";
-import { StatusBadge } from "./StatusBadge";
+} from '@/components/ui/table'
+import { FileItem } from '@/types'
+import { StatusBadge } from './StatusBadge'
 
 interface FileTableProps {
-  files: FileItem[];
-  onView?: (file: FileItem) => void;
-  onDownload?: (file: FileItem) => void;
-  onDelete?: (file: FileItem) => void;
-  className?: string;
+  files: FileItem[]
+  onView?: (file: FileItem) => void
+  onDownload?: (file: FileItem) => void
+  onDelete?: (file: FileItem) => void
+  className?: string
 }
 
-export function FileTable({ 
-  files, 
-  onView, 
-  onDownload, 
-  onDelete, 
-  className 
-}: FileTableProps) {
+export function FileTable({ files, onView, onDownload, onDelete, className }: FileTableProps) {
   return (
     <Card className={`backdrop-blur-sm bg-background/95 ${className || ''}`}>
       <CardHeader>
@@ -60,25 +54,13 @@ export function FileTable({
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-1">
-                    <Button 
-                      variant="ghost" 
-                      size="icon"
-                      onClick={() => onView?.(file)}
-                    >
+                    <Button variant="ghost" size="icon" onClick={() => onView?.(file)}>
                       <Eye className="h-4 w-4" />
                     </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="icon"
-                      onClick={() => onDownload?.(file)}
-                    >
+                    <Button variant="ghost" size="icon" onClick={() => onDownload?.(file)}>
                       <Download className="h-4 w-4" />
                     </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="icon"
-                      onClick={() => onDelete?.(file)}
-                    >
+                    <Button variant="ghost" size="icon" onClick={() => onDelete?.(file)}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
@@ -89,5 +71,5 @@ export function FileTable({
         </Table>
       </CardContent>
     </Card>
-  );
+  )
 }

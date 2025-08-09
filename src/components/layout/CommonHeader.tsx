@@ -1,58 +1,54 @@
-"use client"
+'use client'
 
-import * as React from "react";
-import { Search, Menu, Bell, User } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { 
+import * as React from 'react'
+import { Search, Menu, Bell, User } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
-import { ThemeToggle } from "@/components/common/ThemeToggle";
-import { UserProfile } from "@/components/common/UserProfile"; 
-import { cn } from "@/lib/utils";
+} from '@/components/ui/dropdown-menu'
+import { Badge } from '@/components/ui/badge'
+import { ThemeToggle } from '@/components/common/ThemeToggle'
+import { UserProfile } from '@/components/common/UserProfile'
+import { cn } from '@/lib/utils'
 
 interface CommonHeaderProps {
-  onSearch?: (query: string) => void;
-  onMenuToggle?: () => void;
-  showMenuButton?: boolean;
-  className?: string;
+  onSearch?: (query: string) => void
+  onMenuToggle?: () => void
+  showMenuButton?: boolean
+  className?: string
 }
 
-export function CommonHeader({ 
-  onSearch, 
-  onMenuToggle, 
+export function CommonHeader({
+  onSearch,
+  onMenuToggle,
   showMenuButton = true,
-  className 
+  className,
 }: CommonHeaderProps) {
-  const [searchQuery, setSearchQuery] = React.useState("");
+  const [searchQuery, setSearchQuery] = React.useState('')
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchQuery(value);
-    onSearch?.(value);
-  };
+    const value = e.target.value
+    setSearchQuery(value)
+    onSearch?.(value)
+  }
 
   return (
-    <header className={cn(
-      "sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60",
-      className
-    )}>
+    <header
+      className={cn(
+        'sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60',
+        className,
+      )}
+    >
       <div className="flex h-16 items-center px-4 gap-4">
-        
         {/* Menu Button */}
         {showMenuButton && (
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onMenuToggle}
-            className="shrink-0"
-          >
+          <Button variant="ghost" size="icon" onClick={onMenuToggle} className="shrink-0">
             <Menu className="h-4 w-4" />
             <span className="sr-only">Toggle menu</span>
           </Button>
@@ -73,7 +69,6 @@ export function CommonHeader({
 
         {/* Right Actions */}
         <div className="flex items-center gap-2 ml-auto">
-          
           {/* Theme Toggle */}
           <ThemeToggle />
 
@@ -82,8 +77,8 @@ export function CommonHeader({
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon" className="relative">
                 <Bell className="h-4 w-4" />
-                <Badge 
-                  variant="destructive" 
+                <Badge
+                  variant="destructive"
                   className="absolute -top-1 -right-1 h-5 w-5 rounded-full p-0 text-xs"
                 >
                   3
@@ -97,13 +92,17 @@ export function CommonHeader({
               <DropdownMenuItem>
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium">Document processed</p>
-                  <p className="text-xs text-muted-foreground">Annual report has been successfully processed</p>
+                  <p className="text-xs text-muted-foreground">
+                    Annual report has been successfully processed
+                  </p>
                 </div>
               </DropdownMenuItem>
               <DropdownMenuItem>
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium">Storage warning</p>
-                  <p className="text-xs text-muted-foreground">You&apos;re using 80% of your storage limit</p>
+                  <p className="text-xs text-muted-foreground">
+                    You&apos;re using 80% of your storage limit
+                  </p>
                 </div>
               </DropdownMenuItem>
               <DropdownMenuItem>
@@ -120,5 +119,5 @@ export function CommonHeader({
         </div>
       </div>
     </header>
-  );
+  )
 }

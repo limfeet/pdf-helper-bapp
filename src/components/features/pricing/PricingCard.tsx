@@ -1,21 +1,21 @@
-"use client"
+'use client'
 
-import * as React from "react";
-import { Check } from "lucide-react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import * as React from 'react'
+import { Check } from 'lucide-react'
+import { Card, CardContent, CardHeader } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 interface PricingCardProps {
-  name: string;
-  monthlyPrice: number;
-  yearlyPrice: number;
-  pages: string;
-  features: string[];
-  popular?: boolean;
-  isEnterprise?: boolean;
-  isYearly?: boolean;
-  className?: string;
+  name: string
+  monthlyPrice: number
+  yearlyPrice: number
+  pages: string
+  features: string[]
+  popular?: boolean
+  isEnterprise?: boolean
+  isYearly?: boolean
+  className?: string
 }
 
 export function PricingCard({
@@ -27,18 +27,18 @@ export function PricingCard({
   popular = false,
   isEnterprise = false,
   isYearly = false,
-  className
+  className,
 }: PricingCardProps) {
-  const currentPrice = isYearly ? yearlyPrice : monthlyPrice;
-  const originalYearlyPrice = monthlyPrice * 12;
+  const currentPrice = isYearly ? yearlyPrice : monthlyPrice
+  const originalYearlyPrice = monthlyPrice * 12
 
   return (
     <Card
       className={cn(
-        "relative transition-all hover:shadow-lg",
-        popular && "border-primary shadow-lg scale-105",
-        !popular && "hover:border-primary/50",
-        className
+        'relative transition-all hover:shadow-lg',
+        popular && 'border-primary shadow-lg scale-105',
+        !popular && 'hover:border-primary/50',
+        className,
       )}
     >
       {popular && (
@@ -51,7 +51,7 @@ export function PricingCard({
 
       <CardHeader className="text-center pb-4">
         <h3 className="text-xl font-bold">{name}</h3>
-        
+
         <div className="mb-4">
           {isEnterprise ? (
             <div className="text-2xl font-bold">Need More?</div>
@@ -81,10 +81,10 @@ export function PricingCard({
       <CardContent className="space-y-4">
         <Button
           className={cn(
-            "w-full",
+            'w-full',
             popular || isEnterprise
-              ? "bg-primary hover:bg-primary/90"
-              : "bg-secondary hover:bg-secondary/80"
+              ? 'bg-primary hover:bg-primary/90'
+              : 'bg-secondary hover:bg-secondary/80',
           )}
         >
           {isEnterprise ? 'Contact' : 'Buy'}
@@ -100,5 +100,5 @@ export function PricingCard({
         </div>
       </CardContent>
     </Card>
-  );
+  )
 }
