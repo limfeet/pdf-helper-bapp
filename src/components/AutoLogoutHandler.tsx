@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import { useAutoLogout } from '@/hooks/useAutoLogout'
 
 export function AutoLogoutHandler() {
-  const { user, loading } = useAuth() // ✅ logout 제거
+  const { user, loading, signOut } = useAuth() // ✅ logout 제거
   const router = useRouter()
   const pathname = usePathname()
 
@@ -38,6 +38,7 @@ export function AutoLogoutHandler() {
         // 별도 logout 함수가 없으니 바로 라우팅
         toast.dismiss('warn')
         toast.error('세션이 만료되어 로그아웃되었습니다.', { duration: 5000 })
+        await signOut()
         router.push('/login')
       } catch (e) {
         console.error('로그아웃 처리 중 오류:', e)

@@ -9,6 +9,7 @@ import {
   signOut as firebaseSignOut,
 } from 'firebase/auth'
 import { auth, googleProvider } from '@/lib/firebase'
+import { serverLogout } from '@/lib/sessionApi'
 
 interface AuthContextType {
   user: User | null
@@ -72,7 +73,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // 로그아웃
   const signOut = async (): Promise<void> => {
     try {
-      await firebaseSignOut(auth)
+      try {
+        const apiKey = process.env.NEXT_PUBLIC_API_KEY || ''
+        if (apiKey) {
+          await serverLogout(apiKey)
+        }
+      } catch (e) {
+        console.warn('백엔드 로그아웃 실패:', e)
+      }
+      try {
+        await firebaseSignOut(auth)
+      } catch (e) {
+        console.warn('Firebase 로그아웃 실패:', e)
+      }
+      // 3. 로컬 정리 (항상 실행)
       localStorage.removeItem('firebase-jwt')
       console.log('로그아웃 성공')
     } catch (error) {
