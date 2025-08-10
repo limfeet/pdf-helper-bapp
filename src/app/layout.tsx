@@ -12,6 +12,7 @@ import { AuthProvider } from '@/contexts/AuthContext'
 import { Toaster } from 'sonner'
 // 인증 가드 컴포넌트
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
+import { AutoLogoutHandler } from '@/components/AutoLogoutHandler'
 
 // Inter 폰트 설정 (라틴 문자 서브셋)
 const inter = Inter({ subsets: ['latin'] })
@@ -51,6 +52,7 @@ export default function RootLayout({
         >
           {/* 로그인/로그아웃 상태를 앱 전체에서 사용 가능하게 함 */}
           <AuthProvider>
+            <AutoLogoutHandler />
             {/* 인증 가드: 로그인 안 한 사용자는 로그인 페이지로 리다이렉트 */}
             <ProtectedRoute>
               {children} {/* 실제 페이지 내용이 여기에 렌더링 */}

@@ -26,11 +26,47 @@ export function LoginForm() {
         // JWT를 로컬스토리지에 저장 (선택사항)
         localStorage.setItem('firebase-jwt', jwt)
 
-        // 대시보드로 이동
-        router.push('/')
+        // 3. 백엔드 로그인 API 호출 (세션 쿠키 생성)
+        const loginResponse = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`, {
+          method: 'POST',
+          credentials: 'include', // 쿠키 포함
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': process.env.NEXT_PUBLIC_API_KEY!,
+            authorization: `Bearer ${jwt}`,
+          },
+        })
+
+        // ✅ Set-Cookie 헤더 확인
+        console.log('=== 로그인 응답 분석 ===')
+        console.log('응답 상태:', loginResponse.status)
+        console.log('응답 OK:', loginResponse.ok)
+        console.log('응답 상태 텍스트:', loginResponse.statusText)
+
+        // ✅ 응답 상태 확인
+        console.log('응답 상태:', loginResponse.status)
+        console.log('응답 OK:', loginResponse.ok)
+
+        // ✅ 현재 쿠키 확인 (브라우저에서만 가능)
+        if (typeof document !== 'undefined') {
+          console.log('현재 document.cookie:', document.cookie)
+        }
+
+        if (loginResponse.ok) {
+          const result = await loginResponse.json()
+          console.log('백엔드 로그인 성공:', result)
+
+          // 4. 대시보드로 이동
+          router.push('/')
+        } else {
+          console.error('백엔드 로그인 실패:', loginResponse.status, await loginResponse.text())
+          throw new Error('백엔드 로그인 실패')
+        }
       }
     } catch (error) {
       console.error('로그인 중 오류:', error)
+      // 에러 시 로컬스토리지 정리
+      localStorage.removeItem('firebase-jwt')
     }
   }
 
