@@ -1,7 +1,7 @@
 'use client'
 
 import * as React from 'react'
-import { X, FileText, Home, File, MessageSquare, Settings, CreditCard } from 'lucide-react'
+import { X, FileText, Home, File, MessageSquare, Settings, FileSpreadsheet } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
@@ -23,34 +23,28 @@ interface IndependentSidebarProps {
 
 const defaultItems: SidebarItem[] = [
   {
-    title: 'Dashboard',
-    icon: Home,
+    title: 'PDF Helper',
+    icon: FileSpreadsheet,
     href: '/',
     isActive: false,
   },
-  {
-    title: 'Documents',
-    icon: File,
-    href: '/documents',
-    badge: '4',
-  },
-  {
-    title: 'Chat',
-    icon: MessageSquare,
-    href: '/chat',
-    badge: '2',
-  },
-  {
-    title: 'Pricing',
-    icon: CreditCard,
-    href: '/pricing',
-    isActive: true,
-  },
-  {
-    title: 'Settings',
-    icon: Settings,
-    href: '/settings',
-  },
+  // {
+  //   title: 'Documents',
+  //   icon: File,
+  //   href: '/documents',
+  //   badge: '4',
+  // },
+  // {
+  //   title: 'Chat',
+  //   icon: MessageSquare,
+  //   href: '/chat',
+  //   badge: '2',
+  // },
+  // {
+  //   title: 'Settings',
+  //   icon: Settings,
+  //   href: '/settings',
+  // },
 ]
 
 export function IndependentSidebar({
@@ -81,8 +75,8 @@ export function IndependentSidebar({
               <FileText className="h-4 w-4" />
             </div>
             <div className="flex flex-col">
-              <span className="font-semibold text-sm">PDF Helper</span>
-              <span className="text-xs text-muted-foreground">Admin Dashboard</span>
+              <span className="font-semibold text-sm">Tiny Helper</span>
+              <span className="text-xs text-muted-foreground">Service Menu</span>
             </div>
           </div>
           <Button variant="ghost" size="icon" onClick={onClose} className="h-8 w-8">
@@ -95,7 +89,7 @@ export function IndependentSidebar({
           <div className="space-y-1">
             <div className="px-2 py-1">
               <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Navigation
+                Service Navigation
               </span>
             </div>
 
@@ -128,7 +122,7 @@ export function IndependentSidebar({
 
         {/* Footer */}
         <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-border/50">
-          <div className="text-xs text-muted-foreground text-center">© 2024 PDF Helper</div>
+          <div className="text-xs text-muted-foreground text-center">© 2025 Tiny Helper</div>
         </div>
       </div>
     </>

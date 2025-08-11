@@ -227,6 +227,14 @@ export function useAutoLogout({
   // ===== heartbeat =====
   const sendHeartbeat = useCallback(
     async (force = false): Promise<boolean> => {
+      console.log('[HB] enter', {
+        apiKey: !!apiKey,
+        active: isActiveRef.current,
+        hidden: document.hidden,
+        leader: leaderRef.current,
+        busy: busyRef.current,
+        sinceLast: Date.now() - lastHeartbeatRef.current,
+      })
       if (!apiKey) {
         console.warn('useAutoLogout: API 키가 필요합니다')
         return false
@@ -292,6 +300,7 @@ export function useAutoLogout({
     }
 
     const loop = async () => {
+      console.log('[HB] via periodic loop tick')
       await sendHeartbeat(true)
       if (isActiveRef.current) heartbeatTimerRef.current = setTimeout(loop, heartbeatIntervalMs)
     }
@@ -308,6 +317,7 @@ export function useAutoLogout({
     activityDebounceRef.current = setTimeout(async () => {
       if (!isActiveRef.current) return
       resetSessionTimers()
+      console.log('[HB] via activity, leader=', leaderRef.current)
       await sendHeartbeat(false)
     }, activityDebounceMs)
   }, [resetSessionTimers, sendHeartbeat, activityDebounceMs])
@@ -318,8 +328,12 @@ export function useAutoLogout({
     } else if (isActiveRef.current) {
       resetSessionTimers()
       performLeaderElection()
+      console.log('[HB] via visibility, leader=', leaderRef.current)
       setTimeout(() => {
-        if (leaderRef.current) void sendHeartbeat(true)
+        if (leaderRef.current) {
+          console.log('[HB] visibility -> sending now')
+          void sendHeartbeat(true)
+        }
       }, 1500)
     }
   }, [resignLeadership, resetSessionTimers, performLeaderElection, sendHeartbeat])

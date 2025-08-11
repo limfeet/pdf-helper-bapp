@@ -30,8 +30,8 @@ export function AppSidebar({ navigationItems, className }: AppSidebarProps) {
             <FileText className="h-4 w-4" />
           </div>
           <div className="flex flex-col">
-            <span className="font-semibold text-sm">PDF Helper</span>
-            <span className="text-xs text-muted-foreground">Admin Dashboard</span>
+            <span className="font-semibold text-sm">Tiny Helper</span>
+            <span className="text-xs text-muted-foreground">Service Menu</span>
           </div>
         </div>
       </SidebarHeader>

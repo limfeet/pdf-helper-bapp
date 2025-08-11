@@ -36,6 +36,7 @@ export function ProtectedRoute({ children, fallback }: ProtectedRouteProps) {
     '/privacy',
     '/landing',
     '/terms',
+    '/sponsor',
   ]
 
   const isValidPath = validPaths.some(

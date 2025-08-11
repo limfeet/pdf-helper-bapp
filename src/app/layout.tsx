@@ -19,7 +19,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 // 페이지의 메타데이터 설정 (SEO용)
 export const metadata: Metadata = {
-  title: 'PDF Helper - Admin Dashboard',
+  title: 'PDF Helper - Main Service',
   description: 'Modern admin dashboard for PDF document management and AI-powered chat',
 }
 

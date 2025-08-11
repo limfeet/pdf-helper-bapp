@@ -1,6 +1,6 @@
 'use client'
 
-import { User, ChevronDown } from 'lucide-react'
+import { User, ChevronDown, Heart, CreditCard } from 'lucide-react'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import {
@@ -81,6 +81,14 @@ export function UserProfile({
     }
   }
 
+  const handleSponsorClick = () => {
+    router.push('/sponsor')
+  }
+
+  const handlePricingClick = () => {
+    router.push('/pricing')
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -108,9 +116,19 @@ export function UserProfile({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
-        <DropdownMenuSeparator />
+        {/* <DropdownMenuSeparator /> */}
         <DropdownMenuItem onClick={handleProfileClick}>Profile</DropdownMenuItem>
-        <DropdownMenuItem onClick={handleSettingsClick}>Settings</DropdownMenuItem>
+        {/* <DropdownMenuItem onClick={handleSettingsClick}>Settings</DropdownMenuItem> */}
+        <DropdownMenuSeparator />
+        <DropdownMenuLabel>Billing</DropdownMenuLabel>
+        <DropdownMenuItem onClick={handlePricingClick}>
+          <CreditCard className="mr-2 h-4 w-4" />
+          <span>Pricing</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleSponsorClick}>
+          <Heart className="mr-2 h-4 w-4" />
+          <span>Sponsor</span>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => {

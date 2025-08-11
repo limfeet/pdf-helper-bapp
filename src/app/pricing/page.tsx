@@ -6,6 +6,7 @@ import { IndependentSidebar } from '@/components/layout/IndependentSidebar'
 import { PricingToggle } from '@/components/features/pricing/PricingToggle'
 import { PricingCard } from '@/components/features/pricing/PricingCard'
 import { mockChatMessages, navigationItems } from '@/lib/mock-data'
+import ComingSoon from '@/components/ComingSoon'
 
 // 요금제 데이터
 const pricingPlans = [
@@ -87,36 +88,37 @@ export default function PricingPage() {
       <CommonHeader onSearch={handleSearch} onMenuToggle={handleMenuToggle} showMenuButton={true} />
 
       <IndependentSidebar isOpen={sidebarOpen} onClose={handleSidebarClose} />
+      <ComingSoon blur={1} dimOpacity={0.35} className="rounded-2xl">
+        <main className="p-6 md:p-8 lg:p-12">
+          {' '}
+          {/* 이 줄 추가 */}
+          <div className="space-y-8">
+            {/* Header */}
+            <div className="text-center">
+              <h1 className="text-4xl font-bold mb-4">Choose Your Plan</h1>
+              <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+                Select the perfect plan for your PDF processing needs. Upgrade or downgrade at any
+                time.
+              </p>
+            </div>
 
-      <main className="p-6 md:p-8 lg:p-12">
-        {' '}
-        {/* 이 줄 추가 */}
-        <div className="space-y-8">
-          {/* Header */}
-          <div className="text-center">
-            <h1 className="text-4xl font-bold mb-4">Choose Your Plan</h1>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Select the perfect plan for your PDF processing needs. Upgrade or downgrade at any
-              time.
-            </p>
+            {/* Toggle */}
+            <PricingToggle isYearly={isYearly} onToggle={setIsYearly} />
+
+            {/* Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-none">
+              {pricingPlans.map((plan) => (
+                <PricingCard
+                  key={plan.name}
+                  {...plan}
+                  isYearly={isYearly}
+                  className="h-full min-w-0"
+                />
+              ))}
+            </div>
           </div>
-
-          {/* Toggle */}
-          <PricingToggle isYearly={isYearly} onToggle={setIsYearly} />
-
-          {/* Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-none">
-            {pricingPlans.map((plan) => (
-              <PricingCard
-                key={plan.name}
-                {...plan}
-                isYearly={isYearly}
-                className="h-full min-w-0"
-              />
-            ))}
-          </div>
-        </div>
-      </main>
+        </main>
+      </ComingSoon>
     </>
   )
 }

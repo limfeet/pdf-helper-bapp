@@ -12,6 +12,7 @@
 
 # testing
 /coverage
+launch.json
 
 # next.js
 /.next/

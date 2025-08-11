@@ -16,6 +16,7 @@ import { Badge } from '@/components/ui/badge'
 import { ThemeToggle } from '@/components/common/ThemeToggle'
 import { UserProfile } from '@/components/common/UserProfile'
 import { cn } from '@/lib/utils'
+import ComingSoon from '../ComingSoon'
 
 interface CommonHeaderProps {
   onSearch?: (query: string) => void
@@ -55,17 +56,19 @@ export function CommonHeader({
         )}
 
         {/* Search Bar */}
-        <div className="flex-1 max-w-md">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Search documents..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-              className="pl-9 bg-background/50 backdrop-blur-sm border-border/50"
-            />
+        <ComingSoon mode="emoji" blur={1} dimOpacity={0.35} className="rounded-2xl">
+          <div className="flex-1 max-w-md">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search documents..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+                className="pl-9 bg-background/50 backdrop-blur-sm border-border/50"
+              />
+            </div>
           </div>
-        </div>
+        </ComingSoon>
 
         {/* Right Actions */}
         <div className="flex items-center gap-2 ml-auto">
@@ -90,26 +93,32 @@ export function CommonHeader({
               <DropdownMenuLabel>Notifications</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem>
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium">Document processed</p>
-                  <p className="text-xs text-muted-foreground">
-                    Annual report has been successfully processed
-                  </p>
-                </div>
+                <ComingSoon mode="emoji" blur={1} dimOpacity={0.35} className="rounded-2xl">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium">Document processed</p>
+                    <p className="text-xs text-muted-foreground">
+                      Annual report has been successfully processed
+                    </p>
+                  </div>
+                </ComingSoon>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium">Storage warning</p>
-                  <p className="text-xs text-muted-foreground">
-                    You&apos;re using 80% of your storage limit
-                  </p>
-                </div>
+                <ComingSoon mode="emoji" blur={1} dimOpacity={0.35} className="rounded-2xl">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium">Storage warning</p>
+                    <p className="text-xs text-muted-foreground">
+                      You&apos;re using 80% of your storage limit
+                    </p>
+                  </div>
+                </ComingSoon>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium">New feature available</p>
-                  <p className="text-xs text-muted-foreground">Try our new AI chat features</p>
-                </div>
+                <ComingSoon mode="emoji" blur={1} dimOpacity={0.35} className="rounded-2xl">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-sm font-medium">New feature available</p>
+                    <p className="text-xs text-muted-foreground">Try our new AI chat features</p>
+                  </div>
+                </ComingSoon>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
