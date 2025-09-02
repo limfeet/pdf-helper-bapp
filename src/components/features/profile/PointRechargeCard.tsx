@@ -52,14 +52,14 @@ const PointRechargePro: React.FC<PointRechargeProProps> = ({
   return (
     <Card className={`w-full ${className ?? ''}`}>
       <CardHeader className="pb-2">
-        <CardTitle className="text-lg">포인트 충전</CardTitle>
+        <CardTitle className="text-lg">Recharge Points</CardTitle>
       </CardHeader>
 
       <CardContent className="space-y-5">
         {/* 현재 포인트 */}
         <div className="rounded-lg p-4 text-center bg-primary/10">
           <div className="text-2xl font-bold text-primary">{currentPoints.toLocaleString()}</div>
-          <div className="text-sm text-muted-foreground">현재 포인트</div>
+          <div className="text-sm text-muted-foreground">Current Points</div>
         </div>
 
         {/* 프리셋 버튼 */}
@@ -89,7 +89,7 @@ const PointRechargePro: React.FC<PointRechargeProProps> = ({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="mb-1 block text-xs font-medium text-muted-foreground">
-              포인트 선택 (최소 {minPoints.toLocaleString()} pt)
+              Select Points (min {minPoints.toLocaleString()} pt)
             </label>
             <Input
               inputMode="numeric"
@@ -97,13 +97,13 @@ const PointRechargePro: React.FC<PointRechargeProProps> = ({
               value={points ? points : ''}
               placeholder={`${minPoints}`}
               onChange={handleInput}
-              aria-label="충전할 포인트"
+              aria-label="Points to recharge"
             />
           </div>
 
           <div>
             <label className="mb-1 block text-xs font-medium text-muted-foreground">
-              결제 금액
+              Payment Amount
             </label>
             <div className="h-10 rounded-md border px-3 flex items-center bg-background">
               <span className="text-sm">
@@ -119,7 +119,7 @@ const PointRechargePro: React.FC<PointRechargeProProps> = ({
 
         {/* 환산 규칙 */}
         <div className="text-xs text-muted-foreground">
-          1달러 = {rate.toLocaleString()}포인트 · 선택한 {points.toLocaleString()}포인트 →
+          $1 = {rate.toLocaleString()} points · Selected {points.toLocaleString()} points →
           <span className="ml-1">
             {currency}{' '}
             {amount.toLocaleString(undefined, {
@@ -155,12 +155,13 @@ const PointRechargePro: React.FC<PointRechargeProProps> = ({
           </form>
         ) : (
           <Button className="w-full" variant="secondary" disabled>
-            포인트를 선택하세요
+            Please select points
           </Button>
         )}
 
         <div className="text-center text-[11px] text-muted-foreground">
-          결제는 PayPal로 처리됩니다. 보안을 위해 서버에서 금액 검증을 추가하는 것을 권장합니다.
+          Payment is processed through PayPal. For security, we recommend adding server-side amount
+          verification.
         </div>
       </CardFooter>
     </Card>

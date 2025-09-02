@@ -1,6 +1,8 @@
+//src/components/features/file-management/FileUploadZone.tsx
 'use client'
 
 import * as React from 'react'
+import { toast } from 'sonner'
 import { Upload, File, X, CheckCircle, AlertCircle } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -42,6 +44,7 @@ interface FileUploadZoneProps {
   className?: string
   maxFiles?: number
   maxFileSize?: number // bytes
+  beforeUpload?: (files: File[]) => Promise<boolean>
 }
 
 export function FileUploadZone({
@@ -51,80 +54,164 @@ export function FileUploadZone({
   onConvertComplete,
   onConvertError,
   className,
-  maxFiles = 100,
-  maxFileSize = 50 * 1024 * 1024, // 50MB
+  maxFiles = 5,
+  maxFileSize = 10 * 1024 * 1024, // 50MB
+  beforeUpload,
 }: FileUploadZoneProps) {
   const [isDragOver, setIsDragOver] = React.useState(false)
   const [uploadedFiles, setUploadedFiles] = React.useState<UploadedFile[]>([])
   const { user } = useAuth() // Firebase user 가져오기
 
-  // CSV 변환 함수
+  // CSV 변환 함수 (필요 포인트 계산 + hold/precharge 분기 + 변환 호출)
   const convertToCSV = async (fileId: string) => {
+    console.log('[convert] debug 001')
     if (!user) return
-
-    // 상태를 converting으로 변경
+    console.log('[convert] debug 002')
+    // 상태 전환
     setUploadedFiles((prev) =>
-      prev.map((file) => (file.fileId === fileId ? { ...file, status: 'converting' } : file)),
+      prev.map((f) => (f.fileId === fileId ? { ...f, status: 'converting' } : f)),
     )
+    console.log('[convert] debug 003')
+    // 업로드 목록에서 원본 파일 찾기 (페이지 수 계산용)
+    const entry = uploadedFiles.find((f) => f.fileId === fileId)
+    if (!entry) {
+      console.error('파일 엔트리를 찾을 수 없습니다:', fileId)
+      setUploadedFiles((prev) =>
+        prev.map((f) => (f.fileId === fileId ? { ...f, status: 'success' } : f)),
+      )
+      return
+    }
+    console.log('[convert] debug 004')
 
     try {
       const token = await user.getIdToken()
       const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:18181'
       const apiKey = process.env.NEXT_PUBLIC_API_KEY || ''
 
+      // 1) 로컬에서 페이지 수 계산 → 필요 포인트 산출
+      //    PAGES_PER_POINT = 10, required = max(1, ceil(pages/10))
+      // v5 ESM 권장 임포트
+      const pdfjs: any = await import('pdfjs-dist')
+      //pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
+      pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`
+
+      const buf = await entry.file.arrayBuffer()
+      const docTask = pdfjs.getDocument({ data: buf })
+      const pdf = await docTask.promise
+      const pages = pdf.numPages
+
+      const requiredPoints = Math.max(1, Math.ceil(pages / 10))
+      console.log('[convert] pages=', pages, 'requiredPoints=', requiredPoints)
+
+      // 공통 헤더
+      const baseHeaders: Record<string, string> = {
+        authorization: `Bearer ${token}`,
+        'x-api-key': apiKey,
+      }
+
+      // 2) 결제/예약 분기
+      //    - 먼저 hold 시도(구독자일 때만 성공). 403이면 비구독자로 판단하고 precharge 진행.
+      const jobId =
+        typeof crypto !== 'undefined' && crypto.randomUUID
+          ? crypto.randomUUID()
+          : `${Date.now()}-${Math.random().toString(16).slice(2)}`
+
+      let holdId: string | undefined
+      let isSubscriber = false
+      console.log('[convert] debug 005')
+      // 2-1) hold 먼저 시도 (구독자만 성공)
+      {
+        const res = await fetch(`${apiBaseUrl}/points/hold`, {
+          method: 'POST',
+          headers: { ...baseHeaders, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            job_id: jobId,
+            points: requiredPoints,
+            ttl_minutes: 30,
+            service_name: 'pdf2csv',
+          }),
+        })
+
+        if (res.ok) {
+          const data = await res.json()
+          holdId = data.hold_id
+          isSubscriber = true
+          console.log('[convert] hold 생성 성공:', data)
+        } else if (res.status === 403) {
+          // 비구독자 경로 → precharge로 폴백
+          console.log('[convert] hold 금지(비구독자) → precharge로 전환')
+        } else if (res.status === 402) {
+          // 구독자지만 포인트 부족
+          const detail = await res.text().catch(() => '')
+          throw new Error(`구독자 포인트 부족(402): ${detail || '포인트가 부족합니다.'}`)
+        } else {
+          // 기타 에러는 그대로 노출
+          const detail = await res.text().catch(() => '')
+          throw new Error(`hold 생성 실패 (${res.status}): ${detail || '오류'}`)
+        }
+      }
+      console.log('[convert] debug 006')
+      // 2-2) 비구독자면 선차감(precharge)
+      if (!isSubscriber) {
+        const res = await fetch(`${apiBaseUrl}/points/precharge`, {
+          method: 'POST',
+          headers: { ...baseHeaders, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            job_id: jobId,
+            points: requiredPoints,
+            service_name: 'pdf2csv',
+          }),
+        })
+
+        if (!res.ok) {
+          const detail = await res.text().catch(() => '')
+          if (res.status === 402) {
+            throw new Error(`선결제 실패(402): ${detail || '포인트가 부족합니다.'}`)
+          }
+          throw new Error(`선결제 실패 (${res.status}): ${detail || '오류'}`)
+        }
+        console.log('[convert] precharge 성공')
+      }
+
+      // 3) 변환 호출
       const formData = new FormData()
       formData.append('file_id', fileId)
 
+      const convertHeaders: Record<string, string> = { ...baseHeaders }
+      if (isSubscriber && holdId) {
+        convertHeaders['X-Hold-Id'] = holdId
+      } else {
+        convertHeaders['X-Job-Id'] = jobId
+      }
+
       const response = await fetch(`${apiBaseUrl}/pdf/convert`, {
         method: 'POST',
-        headers: {
-          authorization: `Bearer ${token}`,
-          'x-api-key': apiKey,
-        },
+        headers: convertHeaders,
         body: formData,
       })
 
-      if (response.ok) {
-        const data = await response.json()
-        console.log('변환 성공:', data)
-
-        // 상태를 converted로 변경
-        setUploadedFiles((prev) =>
-          prev.map((file) =>
-            file.fileId === fileId
-              ? { ...file, status: 'converted', csvSize: data.csv_size }
-              : file,
-          ),
-        )
-
-        if (onConvertComplete) {
-          onConvertComplete(fileId, data.csv_size)
-        }
-      } else {
-        const errorData = await response.json().catch(() => ({ detail: '변환 실패' }))
-        const error = `변환 실패 (${response.status}): ${errorData.detail || '알 수 없는 오류'}`
-        console.error('변환 에러:', error)
-
-        // 상태를 다시 success로 되돌림
-        setUploadedFiles((prev) =>
-          prev.map((file) => (file.fileId === fileId ? { ...file, status: 'success' } : file)),
-        )
-
-        if (onConvertError) {
-          onConvertError(error, fileId)
-        }
+      if (!response.ok) {
+        const errorText = await response.text().catch(() => '')
+        throw new Error(`변환 실패 (${response.status}): ${errorText || '알 수 없는 오류'}`)
       }
+
+      const data = await response.json()
+      console.log('변환 성공:', data)
+
+      // 상태 업데이트
+      setUploadedFiles((prev) =>
+        prev.map((f) =>
+          f.fileId === fileId ? { ...f, status: 'converted', csvSize: data.csv_size } : f,
+        ),
+      )
+      onConvertComplete?.(fileId, data.csv_size)
     } catch (error) {
       console.error('변환 요청 에러:', error)
-
-      // 에러 시 상태 되돌림
+      // 실패 시 업로드 완료 상태로 롤백
       setUploadedFiles((prev) =>
-        prev.map((file) => (file.fileId === fileId ? { ...file, status: 'success' } : file)),
+        prev.map((f) => (f.fileId === fileId ? { ...f, status: 'success' } : f)),
       )
-
-      if (onConvertError) {
-        onConvertError(error instanceof Error ? error.message : '변환 요청 실패', fileId)
-      }
+      onConvertError?.(error instanceof Error ? error.message : '변환 요청 실패', fileId)
     }
   }
 
@@ -207,24 +294,48 @@ export function FileUploadZone({
   }
 
   const handleDrop = (e: React.DragEvent) => {
+    console.log('what is this debug 002')
     e.preventDefault()
     setIsDragOver(false)
-
     const files = e.dataTransfer.files
-    if (files.length > 0) {
-      handleFiles(files)
+    if (files.length > 0) handleFiles(files) // FileList 그대로
+  }
+
+  function cloneFileList(src: FileList): FileList {
+    const anyWin = window as any
+    const dt = anyWin.DataTransfer
+      ? new anyWin.DataTransfer()
+      : anyWin.ClipboardEvent
+      ? new anyWin.ClipboardEvent('').clipboardData
+      : null
+
+    if (!dt) {
+      // 폴백: 새 input을 만들어 강제 복제 (매우 드묾)
+      const input = document.createElement('input')
+      input.type = 'file'
+      // @ts-ignore - FileList는 직접 세팅 불가: 폴백 미지원 브라우저는 배열로 대체
+      return src
     }
+
+    Array.from(src).forEach((file) => dt.items.add(file))
+    return dt.files
   }
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
-    if (files && files.length > 0) {
-      handleFiles(files)
+    console.log('what is this debug 001')
+    const fileList = e.target.files
+    if (fileList && fileList.length > 0) {
+      const cloned = cloneFileList(fileList) // ✅ 새 FileList
+      handleFiles(cloned) // ✅ 여전히 FileList 타입
     }
+    e.target.value = '' // 이제 비워도 cloned는 영향 없음
   }
-
   const handleFiles = async (files: FileList) => {
     console.log('🚀 handleFiles 시작')
+    if (beforeUpload) {
+      const ok = await beforeUpload(Array.from(files))
+      if (!ok) return // 사용자가 취소했거나 선차감 실패
+    }
     const validFiles: File[] = []
     const errors: string[] = []
 
@@ -232,16 +343,19 @@ export function FileUploadZone({
     Array.from(files).forEach((file) => {
       if (file.type !== 'application/pdf') {
         errors.push(`${file.name}: PDF 파일만 업로드 가능합니다.`)
+        toast.error('업로드 불가', { description: errors.join('\n') })
         return
       }
 
       if (file.size > maxFileSize) {
         errors.push(`${file.name}: 파일 크기가 ${maxFileSize / 1024 / 1024}MB를 초과합니다.`)
+        toast.error('업로드 불가', { description: errors.join('\n') })
         return
       }
 
       if (uploadedFiles.length + validFiles.length >= maxFiles) {
         errors.push(`최대 ${maxFiles}개의 파일만 업로드할 수 있습니다.`)
+        toast.error('업로드 불가', { description: errors.join('\n') })
         return
       }
 

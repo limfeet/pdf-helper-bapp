@@ -9,12 +9,24 @@ import { FileTable } from '@/components/features/file-management/FileTable'
 import { ChatInterface } from '@/components/features/chat/ChatInterface'
 import { mockFiles, mockChatMessages, navigationItems } from '@/lib/mock-data'
 import { FileItem, ChatMessage } from '@/types'
+import { useAuth } from '@/contexts/AuthContext'
+import PointsNotice from '@/components/features/points/PointNotice'
+import { usePointsFlow } from '@/components/features/points/usePointFlow'
 
 export default function Dashboard() {
   const [files, setFiles] = React.useState<FileItem[]>(mockFiles)
   const [chatMessages, setChatMessages] = React.useState<ChatMessage[]>(mockChatMessages)
   const [mounted, setMounted] = React.useState(false)
   const [sidebarOpen, setSidebarOpen] = React.useState(false)
+  const { user } = useAuth()
+  const isSubscriber = false
+
+  const { beforeUpload } = usePointsFlow({
+    isSubscriber,
+    onQuoted: (pages, points) => {
+      console.log('[QUOTE]', { pages, points })
+    },
+  })
 
   React.useEffect(() => {
     setMounted(true)
@@ -92,7 +104,8 @@ export default function Dashboard() {
 
         <div className="grid gap-4 lg:grid-cols-3 mt-6">
           <div className="lg:col-span-2 space-y-4">
-            <FileUploadZone onFileSelect={handleFileSelect} />
+            <PointsNotice />
+            <FileUploadZone beforeUpload={beforeUpload} onFileSelect={handleFileSelect} />
 
             <FileTable
               files={files}

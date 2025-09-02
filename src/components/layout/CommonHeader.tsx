@@ -17,6 +17,7 @@ import { ThemeToggle } from '@/components/common/ThemeToggle'
 import { UserProfile } from '@/components/common/UserProfile'
 import { cn } from '@/lib/utils'
 import ComingSoon from '../ComingSoon'
+import PointsPill from '../common/PointsPill'
 
 interface CommonHeaderProps {
   onSearch?: (query: string) => void
@@ -72,6 +73,7 @@ export function CommonHeader({
 
         {/* Right Actions */}
         <div className="flex items-center gap-2 ml-auto">
+          <PointsPill apiBase={process.env.NEXT_PUBLIC_API_BASE_URL} />
           {/* Theme Toggle */}
           <ThemeToggle />
 
